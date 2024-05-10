@@ -1,5 +1,8 @@
 using Application.Product.Queries.GetAllProducts;
+using Application.Product.Queries.GetProductDetails;
+using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Web.Pages.Products
@@ -19,5 +22,12 @@ namespace Web.Pages.Products
         {
             Products = await mediator.Send(new GetAllProductsRequest());
         }
+
+        public async Task<IActionResult> OnGetProductDetails(int id)
+        {
+            var result = await mediator.Send(new GetProductDetailsRequest(id));
+
+            return Partial("_Details", result);
+        }
     }
-}
+}   
