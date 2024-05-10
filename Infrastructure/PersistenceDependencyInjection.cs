@@ -12,8 +12,8 @@ namespace Infrastructure
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-                //options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                options.UseInMemoryDatabase("DemoDb")
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            //options.UseInMemoryDatabase("DemoDb")
             );
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
