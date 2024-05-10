@@ -13,7 +13,7 @@ namespace Application.Configurations.Mapper.ProductProfiles
             CreateMap<CreateProductRequest, Domain.Entities.Product>();
             CreateMap<UpdateProductRequest, Domain.Entities.Product>();
             CreateMap<ProductDto, Domain.Entities.Product>().ReverseMap();
-            CreateMap<ProductDetailsDto, Domain.Entities.Product>();
+            CreateMap<Domain.Entities.Product, ProductDetailsDto>();
         }
     }
 }
