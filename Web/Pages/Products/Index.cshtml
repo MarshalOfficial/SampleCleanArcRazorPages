@@ -41,7 +41,7 @@
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                     <a href="#" data-toggle="modal" data-target="#productDetailsModal" data-id="@item.Id">Details</a> |                    
-                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    <a href="#" class="delete-product" data-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }
@@ -71,25 +71,57 @@
 @section scripts
 {
     <script>
-    $(document).ready(function () {        
-        $('#productDetailsModal').on('show.bs.modal', function (event) {                      
+        $(document).ready(function () {
+            $('#productDetailsModal').on('show.bs.modal', function (event) {
 
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var productId = button.data('id');  // Extract product ID from data-id                
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var productId = button.data('id');  // Extract product ID from data-id                
 
-            $.ajax({
+                $.ajax({
                     url: './Products?handler=ProductDetails', // Adjust the URL to your Get method
-                data: { id: productId },
-                method: 'GET',
-                success: function (response) {
-                    // Load the fetched partial view into the modal's body
-                    $('#productDetailsModal .modal-body').html(response);
-                },
-                error: function () {
-                    $('#productDetailsModal .modal-body').html('<p>Error loading product details.</p>');
+                    data: { id: productId },
+                    method: 'GET',
+                    success: function (response) {
+                        // Load the fetched partial view into the modal's body
+                        $('#productDetailsModal .modal-body').html(response);
+                    },
+                    error: function () {
+                        $('#productDetailsModal .modal-body').html('<p>Error loading product details.</p>');
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            // Handle click event on delete links
+            $('.delete-product').click(function (event) {
+                event.preventDefault(); // Prevent default link behavior
+
+                var productId = $(this).data('id'); // Get product ID from data attribute
+
+                // Show confirmation dialog
+                var confirmDelete = confirm("Are you sure you want to delete this product?");
+
+                if (confirmDelete) {
+                    // AJAX call to delete the product
+                    $.ajax({
+                        url: './Products?handler=DeleteProduct',
+                        data: { id: productId },
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.success) {
+                                alert("Product deleted successfully.");
+                                location.reload(); // Reload the page to update the list
+                            } else {
+                                alert("Error deleting product: " + response.message);
+                            }
+                        },
+                        error: function () {
+                            alert("An error occurred while deleting the product.");
+                        }
+                    });
                 }
             });
         });
-    });
     </script>
 }

@@ -1,3 +1,4 @@
+using Application.Product.Commands.Delete;
 using Application.Product.Queries.GetAllProducts;
 using Application.Product.Queries.GetProductDetails;
 using Domain.Entities;
@@ -29,5 +30,19 @@ namespace Web.Pages.Products
 
             return Partial("_Details", result);
         }
+
+        public async Task<IActionResult> OnGetDeleteProduct(int id)
+        {
+            var result = await mediator.Send(new DeleteProductRequest(id));
+
+            if (result)
+            {
+                return new JsonResult(new { success = true });
+            }
+            else
+            {
+                return new JsonResult(new { success = false, message = "Product not found or deletion failed." });
+            }
+        }
     }
-}   
+}
