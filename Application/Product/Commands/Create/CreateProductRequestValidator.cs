@@ -13,10 +13,7 @@ namespace Application.Product.Commands.Create
         {
             this.mapper = mapper;
             this.repository = repository;
-        }
 
-        public CreateProductRequestValidator()
-        {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Product name is required.")
                 .MaximumLength(500).WithMessage("Product name can't be longer than 100 characters.");
