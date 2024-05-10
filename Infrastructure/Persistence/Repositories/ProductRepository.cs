@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using AutoMapper.Execution;
 using Domain.Entities;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;

@@ -17,8 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Product\Commands\Delete\" />
-		<Folder Include="Product\Commands\Update\" />
 		<Folder Include="Product\Queries\" />
 	</ItemGroup>
 

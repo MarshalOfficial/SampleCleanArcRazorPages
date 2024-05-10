@@ -1,10 +1,9 @@
-﻿using MediatR;
+﻿using Application.Product.Commands._Share;
+using MediatR;
 
 namespace Application.Product.Commands.Create
 {
-    public class CreateProductRequest : IRequest<int>
+    public class CreateProductRequest : BaseProductRequest, IRequest<int>
     {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
     }
 }

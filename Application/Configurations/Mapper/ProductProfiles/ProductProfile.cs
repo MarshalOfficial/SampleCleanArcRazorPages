@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Application.Product.Commands.Create;
+using Application.Product.Commands.Update;
 
 namespace Application.Configurations.Mapper.ProductProfiles
 {
@@ -8,7 +9,7 @@ namespace Application.Configurations.Mapper.ProductProfiles
         public ProductProfile()
         {
             CreateMap<CreateProductRequest, Domain.Entities.Product>();
-            //CreateMap<UpdateProductCommand, Domain.Entities.Product>();
+            CreateMap<UpdateProductRequest, Domain.Entities.Product>();
             //CreateMap<MemberDto, Domain.Entities.Product>().ReverseMap();
             //CreateMap<MemberDetailsDto, Domain.Entities.Product>();
         }
