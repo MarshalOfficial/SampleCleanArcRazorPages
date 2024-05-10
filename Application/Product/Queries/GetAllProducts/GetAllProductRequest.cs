@@ -2,5 +2,5 @@
 
 namespace Application.Product.Queries.GetAllProducts
 {
-    public record GetAllProductsRequest : IRequest<IEnumerable<ProductDto>>;
+    public record GetAllProductsRequest : IRequest<List<ProductDto>>;
 }

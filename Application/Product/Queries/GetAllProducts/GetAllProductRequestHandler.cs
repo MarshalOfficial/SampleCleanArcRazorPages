@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Product.Queries.GetAllProducts
 {
-    public class GetAllProductRequestHandler : IRequestHandler<GetAllProductsRequest, IEnumerable<ProductDto>>
+    public class GetAllProductRequestHandler : IRequestHandler<GetAllProductsRequest, List<ProductDto>>
     {
         private readonly IMapper mapper;
         private readonly IProductRepository repository;
@@ -15,7 +15,7 @@ namespace Application.Product.Queries.GetAllProducts
             this.repository = repository;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetAllProductsRequest request, CancellationToken cancellationToken)
+        public async Task<List<ProductDto>> Handle(GetAllProductsRequest request, CancellationToken cancellationToken)
         {
             // Query the database
             var members = await repository.GetAllAsync();

@@ -13,7 +13,7 @@ namespace Web.Pages.Products
             this.mediator = mediator;
         }
 
-        public IEnumerable<ProductDto> Products { get; set; }
+        public List<ProductDto> Products { get; set; }
 
         public async Task OnGetAsync()
         {
