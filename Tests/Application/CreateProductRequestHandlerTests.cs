@@ -36,12 +36,12 @@ namespace Tests.Application
 
             var handler = new CreateProductRequestHandler(productRepositoryMock.Object, _mapper);
 
-            // Act
-            var result = await handler.Handle(createProductCommand, CancellationToken.None);
+            // Act and Assert
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
+                handler.Handle(createProductCommand, CancellationToken.None));
 
-            // Assert
-            Assert.Equal(0, result);
-            productRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<Product>()), Times.Once);
+            Assert.Contains("Something went wrong.", exception.Message);
+            Assert.Contains("The product Already exists.", exception.Errors.Values.FirstOrDefault());
         }
 
         [Fact]
