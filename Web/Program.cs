@@ -1,17 +1,18 @@
 using Application;
 using Infrastructure;
 
-namespace Web // Adjust namespace as needed
+namespace Web
 {
     public class Program
     {
-        // The main method serves as the entry point for the application
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddRazorPages();
+            
+            builder.Services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeFolder("/");
+            });
 
             builder.Services
                 .AddApplicationServices()
@@ -30,13 +31,10 @@ namespace Web // Adjust namespace as needed
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapRazorPages();
-
             app.Run();
         }
     }
