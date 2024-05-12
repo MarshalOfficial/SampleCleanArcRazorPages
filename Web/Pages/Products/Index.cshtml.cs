@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Web.Pages.Products
 {
+    [ValidateAntiForgeryToken]
     public class IndexModel : PageModel
     {
         private readonly IMediator mediator;
@@ -31,7 +32,8 @@ namespace Web.Pages.Products
             return Partial("_Details", result);
         }
 
-        public async Task<IActionResult> OnGetDeleteProduct(int id)
+
+        public async Task<IActionResult> OnPostDeleteProduct([FromForm] int id)
         {
             var result = await mediator.Send(new DeleteProductRequest(id));
 

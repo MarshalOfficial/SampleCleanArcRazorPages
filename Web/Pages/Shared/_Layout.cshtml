@@ -27,7 +27,17 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Products</a>
-                        </li>
+                        </li>                        
+                        <ul class="navbar-nav ml-auto">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <form id="logoutForm" method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                        <button type="submit" class="nav-link btn btn-link">Logout</button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
                     </ul>
                 </div>
             </div>
