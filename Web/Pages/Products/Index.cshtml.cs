@@ -42,7 +42,7 @@ namespace Web.Pages.Products
             }
             else
             {
-                return new JsonResult(new { success = false, message = result.Errors.FirstOrDefault().Value });
+                return new JsonResult(new { success = false, message = result.GetAllErrorMessages() });
             }
         }
     }
