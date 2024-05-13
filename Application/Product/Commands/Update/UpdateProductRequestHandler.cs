@@ -1,11 +1,11 @@
-﻿using Application.Exceptions;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using AutoMapper;
+using Domain.Dtos;
 using MediatR;
 
 namespace Application.Product.Commands.Update
 {
-    public class UpdateProductRequestHandler : IRequestHandler<UpdateProductRequest, int>
+    public class UpdateProductRequestHandler : IRequestHandler<UpdateProductRequest, ResultWithId>
     {
         private readonly IMapper mapper;
         private readonly IProductRepository repository;
@@ -16,7 +16,7 @@ namespace Application.Product.Commands.Update
             this.repository = repository;
         }
 
-        public async Task<int> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
+        public async Task<ResultWithId> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
         {
             // validating incoming data
             var validator = new UpdateProductRequestValidator();
@@ -24,14 +24,26 @@ namespace Application.Product.Commands.Update
 
             if (validationResult.Errors.Any())
             {
-                throw new BadRequestException("Something went wrong", validationResult.ToDictionary());
+                return new ResultWithId
+                {
+                    Succeed = false,
+                    Errors = validationResult.ToDictionary(),
+                };
             }
 
             // get the item to edit form the DataBase
             var itemToEdit = await repository.GetByIdAsync(request.Id);
 
             if (itemToEdit is null)
-                throw new NotFoundException(nameof(itemToEdit), request.Id.ToString());
+            {
+                return new ResultWithId
+                {
+                    Succeed = false,
+                    Errors = new Dictionary<string, string[]> { { "404", new string[] { "item not found." } } },
+                    Id = request.Id
+                };
+            }
+
 
             // convert to domain entity data
             mapper.Map(request, itemToEdit);
@@ -40,7 +52,7 @@ namespace Application.Product.Commands.Update
             await repository.UpdateAsync(itemToEdit);
 
             // return value
-            return itemToEdit.Id;
+            return new ResultWithId { Id = itemToEdit.Id, Succeed = true };
         }
     }
 }

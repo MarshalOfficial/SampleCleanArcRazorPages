@@ -13,6 +13,8 @@ namespace Web.Pages.Products
         [BindProperty]
         public UpdateProductRequest Product { get; set; } = new UpdateProductRequest();
 
+        public string ErrorMessage { get; set; }
+
         public EditModel(IMediator mediator)
         {
             _mediator = mediator;
@@ -46,9 +48,17 @@ namespace Web.Pages.Products
                 return Page();
             }
 
-            await _mediator.Send(Product);
+            var result = await _mediator.Send(Product);
 
-            return RedirectToPage("./Index");
+            if (result.Succeed)
+            {
+                return RedirectToPage("./Index");
+            }
+            else
+            {
+                ErrorMessage = result.GetAllErrorMessages();
+                return Page();
+            }
         }
     }
 }

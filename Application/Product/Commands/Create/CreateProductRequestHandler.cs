@@ -1,11 +1,11 @@
-﻿using Application.Exceptions;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using AutoMapper;
+using Domain.Dtos;
 using MediatR;
 
 namespace Application.Product.Commands.Create
 {
-    public class CreateProductRequestHandler : IRequestHandler<CreateProductRequest, int>
+    public class CreateProductRequestHandler : IRequestHandler<CreateProductRequest, ResultWithId>
     {
         private readonly IProductRepository repository;
         private readonly IMapper mapper;
@@ -16,7 +16,7 @@ namespace Application.Product.Commands.Create
             this.mapper = mapper;
         }
 
-        public async Task<int> Handle(CreateProductRequest request, CancellationToken cancellationToken)
+        public async Task<ResultWithId> Handle(CreateProductRequest request, CancellationToken cancellationToken)
         {
             // validating incoming data
             var validator = new CreateProductRequestValidator(mapper, repository);
@@ -24,7 +24,11 @@ namespace Application.Product.Commands.Create
 
             if (validationResult.IsValid == false)
             {
-                throw new BadRequestException("Something went wrong.", validationResult.ToDictionary());
+                return new ResultWithId
+                {
+                    Succeed = false,
+                    Errors = validationResult.ToDictionary(),
+                };
             }
 
             // convert to domain entity data
@@ -34,7 +38,7 @@ namespace Application.Product.Commands.Create
             await repository.CreateAsync(itemToAdd);
 
             // return value
-            return itemToAdd.Id;
+            return new ResultWithId { Id = itemToAdd.Id, Succeed = true };
         }
     }
 }

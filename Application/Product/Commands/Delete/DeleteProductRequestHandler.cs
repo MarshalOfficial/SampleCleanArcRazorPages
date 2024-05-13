@@ -1,10 +1,10 @@
-﻿using Application.Exceptions;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Domain.Dtos;
 using MediatR;
 
 namespace Application.Product.Commands.Delete
 {
-    public class DeleteProductRequestHandler : IRequestHandler<DeleteProductRequest, bool>
+    public class DeleteProductRequestHandler : IRequestHandler<DeleteProductRequest, ResultWithId>
     {
         private readonly IProductRepository repository;
 
@@ -13,7 +13,7 @@ namespace Application.Product.Commands.Delete
             this.repository = repository;
         }
 
-        public async Task<bool> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
+        public async Task<ResultWithId> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
         {
             // retrieve domain entity object
             var item = await repository.GetByIdAsync(request.Id);
@@ -21,14 +21,19 @@ namespace Application.Product.Commands.Delete
             // verify that record exists
             if (item == null)
             {
-                throw new NotFoundException(nameof(item), request.Id.ToString());
+                return new ResultWithId
+                {
+                    Succeed = false,
+                    Errors = new Dictionary<string, string[]> { { "404", new string[] { "item not found." } } },
+                    Id = request.Id
+                };
             }
 
             // remove from database
             await repository.DeleteAsync(item);
 
             // return value
-            return true;
+            return new ResultWithId { Id = request.Id, Succeed = true };
         }
     }
 }

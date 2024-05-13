@@ -1,7 +1,6 @@
 using Application.Product.Commands.Delete;
 using Application.Product.Queries.GetAllProducts;
 using Application.Product.Queries.GetProductDetails;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -37,13 +36,13 @@ namespace Web.Pages.Products
         {
             var result = await mediator.Send(new DeleteProductRequest(id));
 
-            if (result)
+            if (result.Succeed)
             {
                 return new JsonResult(new { success = true });
             }
             else
             {
-                return new JsonResult(new { success = false, message = "Product not found or deletion failed." });
+                return new JsonResult(new { success = false, message = result.Errors.FirstOrDefault().Value });
             }
         }
     }

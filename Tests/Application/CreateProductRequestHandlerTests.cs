@@ -1,5 +1,4 @@
-﻿using Application.Exceptions;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Application.Product.Commands.Create;
 using AutoMapper;
 using Domain.Entities;
@@ -36,12 +35,17 @@ namespace Tests.Application
 
             var handler = new CreateProductRequestHandler(productRepositoryMock.Object, _mapper);
 
-            // Act and Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-                handler.Handle(createProductCommand, CancellationToken.None));
+            // Act and Assert when application layer throw exceptions
+            //var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
+            //    handler.Handle(createProductCommand, CancellationToken.None));
 
-            Assert.Contains("Something went wrong.", exception.Message);
-            Assert.Contains("The product Already exists.", exception.Errors.Values.FirstOrDefault());
+            //Assert.Contains("Something went wrong.", exception.Message);
+            //Assert.Contains("The product Already exists.", exception.Errors.Values.FirstOrDefault());
+
+            var result = await handler.Handle(createProductCommand, CancellationToken.None);
+
+            Assert.Equal(false, result.Succeed);
+            Assert.Contains("The product Already exists.", result.Errors.Values.FirstOrDefault());
         }
 
         [Fact]
@@ -58,11 +62,10 @@ namespace Tests.Application
 
 
             // Act and Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-                handler.Handle(createProductCommand, CancellationToken.None));
+            var result = await handler.Handle(createProductCommand, CancellationToken.None);
 
-            Assert.Contains("Something went wrong.", exception.Message);
-            Assert.Contains("Product name is required.", exception.Errors.Values.FirstOrDefault());
+            Assert.Equal(false, result.Succeed);
+            Assert.Contains("Product name is required.", result.Errors.Values.FirstOrDefault());
         }
 
         [Fact]
@@ -79,11 +82,10 @@ namespace Tests.Application
 
 
             // Act and Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-                handler.Handle(createProductCommand, CancellationToken.None));
+            var result = await handler.Handle(createProductCommand, CancellationToken.None);
 
-            Assert.Contains("Something went wrong.", exception.Message);
-            Assert.Contains("Product price must be greater than zero.", exception.Errors.Values.FirstOrDefault());
+            Assert.Equal(false, result.Succeed);
+            Assert.Contains("Product price must be greater than zero.", result.Errors.Values.FirstOrDefault());
         }
 
         [Fact]
@@ -100,11 +102,11 @@ namespace Tests.Application
 
 
             // Act and Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-                handler.Handle(createProductCommand, CancellationToken.None));
+            var result = await handler.Handle(createProductCommand, CancellationToken.None);
 
-            Assert.Contains("Something went wrong.", exception.Message);
-            Assert.Contains("Product price must be less than $100K.", exception.Errors.Values.FirstOrDefault());
+
+            Assert.Equal(false, result.Succeed);
+            Assert.Contains("Product price must be less than $100K.", result.Errors.Values.FirstOrDefault());
         }
     }
 }
