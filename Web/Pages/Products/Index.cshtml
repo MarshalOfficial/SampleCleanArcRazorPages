@@ -4,6 +4,8 @@
     ViewData["Title"] = "Products";
 }
 
+@Html.AntiForgeryToken()
+
 <h1>@ViewData["Title"]</h1>
 
 <a class="btn btn-success" asp-page="Create">Create New Product</a>
@@ -41,8 +43,12 @@
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                     <a href="#" data-toggle="modal" data-target="#productDetailsModal" data-id="@item.Id">Details</a> |                    
-                    <a href="#" class="delete-product" data-id="@item.Id">Delete</a>
-                </td>
+                    @* <a href="#" class="delete-product" data-id="@item.Id">Delete</a> *@
+                    <form id="deleteForm" asp-page-handler="DeleteProduct" method="post">
+                        <input type="hidden" name="id" id="productId" />
+                        <a href="#" class="delete-product" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Are you sure you want to delete this product?" data-ajax-success="onSuccess" data-ajax-error="onError" data-ajax-begin="onBegin">Delete</a>
+                        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+                    </form>
             </tr>
         }
     </tbody>
@@ -71,6 +77,7 @@
 @section scripts
 {
     <script>
+        
         $(document).ready(function () {
             $('#productDetailsModal').on('show.bs.modal', function (event) {
 
@@ -92,41 +99,71 @@
             });
         });
 
-        $(document).ready(function () {
-            // Handle click event on delete links
-            $('.delete-product').click(function (event) {
-                event.preventDefault(); // Prevent default link behavior
-
-                var productId = $(this).data('id'); // Get product ID from data attribute
-                var token = $('input[name="__RequestVerificationToken"]').val(); // Get anti-forgery token
 
 
-                // Show confirmation dialog
-                var confirmDelete = confirm("Are you sure you want to delete this product?");
 
-                if (confirmDelete) {
-                    // AJAX call to delete the product
-                    $.ajax({
-                        url: './Products?handler=DeleteProduct',
-                        data: {
-                            id: productId,
-                            __RequestVerificationToken: token // Include the anti-forgery token
-                        },
-                        method: 'POST',
-                        success: function (response) {
-                            if (response.success) {
-                                alert("Product deleted successfully.");
-                                location.reload(); // Reload the page to update the list
-                            } else {
-                                alert("Error deleting product: " + response.message);
-                            }
-                        },
-                        error: function () {
-                            alert("An error occurred while deleting the product.");
-                        }
-                    });
-                }
-            });
+        function onBegin(xhr) {
+            var token = $('[name="__RequestVerificationToken"]').val();
+            xhr.setRequestHeader("RequestVerificationToken", token);
+        }
+
+        function onSuccess(response) {
+            if (response.success) {
+                alert("Product deleted successfully.");
+                location.reload(); // Reload the page to update the list
+            } else {
+                alert("Error deleting product: " + response.message);
+            }
+        }
+
+        function onError() {
+            alert("An error occurred while deleting the product.");
+        }
+
+        $('.delete-product').click(function (event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            var productId = $(this).data('id'); // Get product ID from data attribute
+            $('#productId').val(productId); // Set product ID in the hidden input
+
+            $('#deleteForm').submit(); // Submit the form
         });
+
+        // $(document).ready(function () {
+        //     // Handle click event on delete links
+        //     $('.delete-product').click(function (event) {
+        //         event.preventDefault(); // Prevent default link behavior
+
+        //         var productId = $(this).data('id'); // Get product ID from data attribute
+        //         var token = $('input[name="__RequestVerificationToken"]').val(); // Get anti-forgery token
+
+
+        //         // Show confirmation dialog
+        //         var confirmDelete = confirm("Are you sure you want to delete this product?");
+
+        //         if (confirmDelete) {
+        //             // AJAX call to delete the product
+        //             $.ajax({
+        //                 url: './Products?handler=DeleteProduct',
+        //                 data: {
+        //                     id: productId,
+        //                     __RequestVerificationToken: token // Include the anti-forgery token
+        //                 },
+        //                 method: 'POST',
+        //                 success: function (response) {
+        //                     if (response.success) {
+        //                         alert("Product deleted successfully.");
+        //                         location.reload(); // Reload the page to update the list
+        //                     } else {
+        //                         alert("Error deleting product: " + response.message);
+        //                     }
+        //                 },
+        //                 error: function () {
+        //                     alert("An error occurred while deleting the product.");
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
     </script>
 }
