@@ -3,6 +3,7 @@ using Application.Product.Queries.GetProductDetails;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Web.ViewModels.Product;
 
 namespace Web.Pages.Products
 {
@@ -11,7 +12,7 @@ namespace Web.Pages.Products
         private readonly IMediator _mediator;
 
         [BindProperty]
-        public UpdateProductRequest Product { get; set; } = new UpdateProductRequest();
+        public UpdateProductModel Product { get; set; } = new UpdateProductModel();
 
         public string ErrorMessage { get; set; }
 
@@ -48,7 +49,7 @@ namespace Web.Pages.Products
                 return Page();
             }
 
-            var result = await _mediator.Send(Product);
+            var result = await _mediator.Send(new UpdateProductRequest { Id = Product.Id, Name = Product.Name, Price = Product.Price });
 
             if (result.Succeed)
             {

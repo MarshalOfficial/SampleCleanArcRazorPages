@@ -2,6 +2,7 @@ using Application.Product.Commands.Create;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Web.ViewModels.Product;
 
 namespace Web.Pages.Products
 {
@@ -10,7 +11,7 @@ namespace Web.Pages.Products
         private readonly IMediator _mediator;
 
         [BindProperty]
-        public CreateProductRequest Product { get; set; } = new CreateProductRequest();
+        public AddProductModel Product { get; set; } = new AddProductModel();
 
         public string ErrorMessage { get; set; }
 
@@ -27,7 +28,7 @@ namespace Web.Pages.Products
                 return Page();
             }
 
-            var result = await _mediator.Send(Product);
+            var result = await _mediator.Send(new CreateProductRequest { Name = Product.Name, Price = Product.Price });
 
             if (result.Succeed)
             {
